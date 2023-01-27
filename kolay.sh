@@ -50,9 +50,13 @@ init_project() {
 	printf ".build()\n" | tee -a cate/debug.cate cate/release.cate
 
 	printf "#include <cpp_kolay.hpp>\n\ni32 main(i32 argc, char const* argv[])\n{\n\t\n\treturn 0;\n}" > src/main.cpp
+
+	echo Done.
 }
 
-add_class() {
+namespace_name=''
+class_name=''
+add_guard() {
 	not_empty $1
 	if [ ! -d "src" ]; then
 		echo "Project was not inited."
@@ -62,12 +66,24 @@ add_class() {
 		echo "$1 was already added."
 		exit 1
 	fi
-	require cate
 
-	printf "#pragma once\nclass $1\n{\n" > include/$1.hpp
-	printf "public:\n\t$1();\n\t~$1();\n};" >> include/$1.hpp
-	printf "#include \"$1.hpp\"\n$1::$1()\n{\n\t\n}\n\n" > src/$1.cpp
-	printf "$1::~$1()\n{\n\t\n}" >> src/$1.cpp
+	if [[ $1 != *"::"* ]]; then return; fi
+
+	#namespace things
+	temp=$1
+	class_name=${temp##*\:\:}
+	namespace_name=${temp%\:\:*}
+	echo $namespace_name " :: " $class_name
+}
+
+add_class() {
+	add_guard $1
+	name=$class_name
+
+	printf "#pragma once\nclass $name\n{\n" > include/$name.hpp
+	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$name.hpp
+	printf "#include \"$name.hpp\"\n$name::$name()\n{\n\t\n}\n\n" > src/$name.cpp
+	printf "$name::~$name()\n{\n\t\n}" >> src/$name.cpp
 }
 
 if [ "$#" -lt 1 ]; then

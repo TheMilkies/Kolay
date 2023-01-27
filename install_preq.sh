@@ -15,12 +15,20 @@ x86_64)
     ;;
 esac
 
+require() {
+	for program in "$@"; do
+		if ! command -v $program &> /dev/null;then
+			echo "Please install \"$program\""
+		fi
+	done
+}
+
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
 	apt -qqq install -y build-essential wget git
 else
 	echo "Currently only debian-based distros are supported."
-	echo "Please install the following packages: gcc, g++, wget, git, bash"
 fi
+require g++ bash wget git 
 
 # cate
 verlte() {

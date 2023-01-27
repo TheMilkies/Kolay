@@ -61,10 +61,12 @@ self_update() {
 	if verlt $KOLAY_VERSION $latest_version; then
 		echo "Updating to" $latest_version
 		mkdir kolay_tmp; cd kolay_tmp
-		git clone https://github.com/TheMilkies/Kolay.git
-		if [ ! -d Kolay ]; then
+		git clone --quiet https://github.com/TheMilkies/Kolay.git
+		if [ $? -ne 0 ] || [ ! -d Kolay ]; then
+			echo $?
 			echo "Error in getting Kolay from github."
-			cd ../../; rm -rf kolay_tmp
+			cd ../; rm -rf kolay_tmp
+			exit 1
 		fi
 		cd Kolay; ./install_preq.sh
 		cd ../../

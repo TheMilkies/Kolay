@@ -3,6 +3,7 @@ mkdir _test;cd _test
 
 kolay init test
 kolay add class TestClass
+kolay add class Namespace::Test
 
 cate
 if [ $? -ne 0 ]; then

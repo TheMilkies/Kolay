@@ -54,8 +54,6 @@ init_project() {
 	echo Done.
 }
 
-namespace_name=''
-class_name=''
 add_guard() {
 	not_empty $1
 	if [ ! -d "src" ]; then
@@ -66,24 +64,49 @@ add_guard() {
 		echo "$1 was already added."
 		exit 1
 	fi
+}
 
+split_namespace() {
 	if [[ $1 != *"::"* ]]; then return; fi
 
 	#namespace things
 	temp=$1
 	class_name=${temp##*\:\:}
 	namespace_name=${temp%\:\:*}
-	echo $namespace_name " :: " $class_name
+}
+
+start_namespace() {
+	if [ ! -z $namespace_name ]; then
+		printf "namespace $namespace_name {\n\n" >> $1; fi
+}
+
+end_namespace() {
+	if [ ! -z $namespace_name ]; then
+		printf "\n\n} //namespace $namespace_name" >> $1; fi
 }
 
 add_class() {
 	add_guard $1
-	name=$class_name
+	split_namespace $1
+	name=$1
+	if [ ! -z $class_name ]; then
+		name=$class_name
+	fi
 
-	printf "#pragma once\nclass $name\n{\n" > include/$name.hpp
+	printf "#pragma once\n\n" > include/$name.hpp
+	start_namespace include/$name.hpp
+	printf "class $name\n{\n" >> include/$name.hpp
 	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$name.hpp
-	printf "#include \"$name.hpp\"\n$name::$name()\n{\n\t\n}\n\n" > src/$name.cpp
+	end_namespace include/$name.hpp
+
+	printf "#include \"$name.hpp\"\n" > src/$name.cpp
+
+	start_namespace src/$name.cpp
+
+	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$name.cpp
 	printf "$name::~$name()\n{\n\t\n}" >> src/$name.cpp
+
+	end_namespace src/$name.cpp
 }
 
 if [ "$#" -lt 1 ]; then

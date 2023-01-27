@@ -43,11 +43,11 @@ init_project() {
 
 	mkdir -p src include cate
 	echo "def debug" > .catel
-	printf "Project $1\n" | tee cate/debug.cate cate/release.cate
-	printf ".files = {\"src/**.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate
-	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate
-	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate
-	printf ".build()\n" | tee -a cate/debug.cate cate/release.cate
+	printf "Project $1\n" | tee cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".files = {\"src/**.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
+	printf ".build()\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 
 	printf "#include <cpp_kolay.hpp>\n\ni32 main(i32 argc, char const* argv[])\n{\n\t\n\treturn 0;\n}" > src/main.cpp
 
@@ -91,6 +91,10 @@ reset_namespace() {
 	namespace_name=''
 }
 
+start_header() {
+	printf "#pragma once\n#include <cpp_kolay.hpp>\n\n" > $1
+}
+
 new_class() {
 	add_guard $1
 	split_namespace $1
@@ -99,7 +103,7 @@ new_class() {
 		name=$class_name
 	fi
 
-	printf "#pragma once\n\n" > include/$name.hpp
+	start_header include/$name.hpp
 	start_namespace include/$name.hpp
 	printf "class $name\n{\n" >> include/$name.hpp
 	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$name.hpp

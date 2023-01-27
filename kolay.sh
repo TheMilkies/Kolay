@@ -119,9 +119,16 @@ split_namespace() {
 	if [[ $1 != *"::"* ]]; then return; fi
 
 	#namespace things
-	temp=$1
-	class_name=${temp##*\:\:}
-	namespace_name=${temp%\:\:*}
+	class_name=${1##*\:\:}
+	namespace_name=${1%\:\:*}
+
+	#check if it's in library
+	temp=${1%%\:\:*}
+	temp=${temp,,}
+
+	if [ -d src/lib$temp ] || [ -d include/lib$temp ]; then
+		lib_path_name="lib$temp"
+	fi
 }
 
 start_namespace() {
@@ -135,6 +142,7 @@ end_namespace() {
 }
 
 reset_namespace() {
+	lib_path_name=''
 	class_name=''
 	namespace_name=''
 }
@@ -151,18 +159,22 @@ new_class() {
 		name=$class_name
 	fi
 
-	start_header include/$name.hpp
-	start_namespace include/$name.hpp
-	printf "class $name\n{\n" >> include/$name.hpp
-	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$name.hpp
-	end_namespace include/$name.hpp
+	start_header include/$lib_path_name/$name.hpp
+	start_namespace include/$lib_path_name/$name.hpp
+	printf "class $name\n{\n" >> include/$lib_path_name/$name.hpp
+	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$lib_path_name/$name.hpp
+	end_namespace include/$lib_path_name/$name.hpp
 
-	printf "#include \"$name.hpp\"\n" > src/$name.cpp
+	if [ ! -z $lib_path_name ]; then
+		printf "#include \"$lib_path_name/$name.hpp\"\n" > src/$lib_path_name/$name.cpp
+	else
+		printf "#include \"$name.hpp\"\n" > src/$lib_path_name/$name.cpp
+	fi
 
-	start_namespace src/$name.cpp
-	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$name.cpp
-	printf "$name::~$name()\n{\n\t\n}" >> src/$name.cpp
-	end_namespace src/$name.cpp
+	start_namespace src/$lib_path_name/$name.cpp
+	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$lib_path_name/$name.cpp
+	printf "$name::~$name()\n{\n\t\n}" >> src/$lib_path_name/$name.cpp
+	end_namespace src/$lib_path_name/$name.cpp
 	reset_namespace
 }
 

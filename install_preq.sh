@@ -4,6 +4,11 @@
 # sudo apt update
 # sudo apt install -y build-essentials fish wget
 
+if [ "$EUID" -ne 0 ]; then
+	echo "Please run as root (with sudo or doas)."
+	exit 1
+fi
+
 # cate
 verlte() {
     [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]

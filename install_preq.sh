@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
-	apt install -y build-essentials wget git
+	apt install -y build-essential wget git
 fi
 
 # cate

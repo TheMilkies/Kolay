@@ -17,7 +17,7 @@ require() {
 }
 
 help_() {
-	echo 'Kolay tools for C++'
+	echo 'Kolay (tools) for C++'
 	echo '	self-update: updates kolay'
 	echo '	init:		 creates a project with the specified name'
 	echo
@@ -67,6 +67,7 @@ add_guard() {
 }
 
 split_namespace() {
+	not_empty $1
 	if [[ $1 != *"::"* ]]; then return; fi
 
 	#namespace things
@@ -90,7 +91,7 @@ reset_namespace() {
 	namespace_name=''
 }
 
-add_class() {
+new_class() {
 	add_guard $1
 	split_namespace $1
 	name=$1
@@ -167,7 +168,7 @@ case $1 in
 		case $1 in
 		class)
 			shift
-			add_class $1
+			new_class $1
 			shift
 			;;
 		library)

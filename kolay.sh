@@ -18,12 +18,15 @@ require() {
 
 help_() {
 	echo 'Kolay (tools) for C++'
-	echo '	self-update: updates kolay'
-	echo '	init:		 creates a project with the specified name'
+	echo 'kolay <action> [subaction] <name>'
 	echo
-	echo '	new:'
-	echo '	    class:   creates a class   with the specified name'
-	echo '	    library: creates a library with the specified name'
+	echo '  self-update:       updates kolay'
+	echo '  init:              creates a project with the specified name'
+	echo
+	echo '  new:' 
+	echo '    class:           creates a class   with the specified name'
+	echo '    static-library:  creates a library with the specified name'
+	echo '    dynamic-library: same as above'
 }
 
 not_empty() {
@@ -44,13 +47,51 @@ init_project() {
 	mkdir -p src include cate
 	echo "def debug" > .catel
 	printf "Project $1\n" | tee cate/debug.cate cate/release.cate > /dev/null 2>&1
-	printf ".files = {\"src/**.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".files = {\"src/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
-	printf ".build()\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 
 	printf "#include <cpp_kolay.hpp>\n\ni32 main(i32 argc, char const* argv[])\n{\n\t\n\treturn 0;\n}" > src/main.cpp
 
+	echo Done.
+}
+
+init_library() {
+	not_empty $1
+	if [ -d "src/lib$1" ]; then
+		echo "library already inited."
+		exit 1
+	fi
+	require tee cate mkdir
+
+	mkdir -p src/lib$1 include/lib$1 cate
+	if [ ! -f .catel ]; then echo "def debug" > .catel; fi
+
+	if [ $2 == "static" ]; then
+		type="static"
+	# elif [ $2 -eq 'stynamic' ]; then
+		# un
+	else
+		type="dynamic"
+	fi
+
+	printf "Library $1($type)\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".files = {\"src/lib$1/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
+	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+
+	namespace_name=$1
+	start_header include/lib$1/$1.hpp
+	start_namespace include/lib$1/$1.hpp
+	end_namespace   include/lib$1/$1.hpp
+
+	printf "#include \"lib$1/$1.hpp\"\n\n" > src/lib$1/$1.cpp
+	start_namespace src/lib$1/$1.cpp
+	end_namespace   src/lib$1/$1.cpp
+
+	reset_namespace
 	echo Done.
 }
 
@@ -153,7 +194,7 @@ self_update() {
 while [[ $# -gt 0 ]]; do
 case $1 in
 	self-update)
-		shift 
+		shift
 		self_update
 		exit
 		;;
@@ -175,9 +216,15 @@ case $1 in
 			new_class $1
 			shift
 			;;
-		library)
-			echo "Unimplemented"
-			exit 1
+		static-library)
+			shift
+			init_library $1 static
+			shift
+			;;
+		dynamic-library)
+			shift
+			init_library $1 dynamic
+			shift
 			;;
 		*)
 			echo "Unknown option $1"

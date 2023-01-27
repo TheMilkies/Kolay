@@ -47,6 +47,7 @@ typedef char* c_string;
 #define unimplemented() std::cout << "unimplemented\n";
 #define unimplemented_exit() {unimplemented(); exit(1);}
 #define DPRINT(var)
+#define DTEXT(var)
 #define nul_guard(ptr) if(!ptr) {\
 	std::cout << "Null pointer error. quitting.\n";\
 	exit(1);\

@@ -3,8 +3,9 @@ mkdir test;cd test
 
 kolay init test
 kolay new class TestClass new class TestNamespace::Test
-kolay new static-library TTTT new dynamic-library AAAA
-kolay new stynamic-library QQQQ
+kolay new static-library TestA new dynamic-library TestB
+kolay new stynamic-library TestC
+kolay new class TestC::Aqua
 
 cate
 if [ $? -ne 0 ]; then
@@ -13,4 +14,4 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-# cd ../; rm -rf test
+cd ../; rm -rf test

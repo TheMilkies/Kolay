@@ -48,7 +48,7 @@ init_project() {
 	echo "def debug" > .catel
 	printf "Project $1\n" | tee cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".files = {\"src/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
-	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".flags = \"-O2 -fpermissive\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 
@@ -80,7 +80,7 @@ init_library() {
 
 	printf "Library $1($type)\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".files = {\"src/$libname/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
-	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".flags = \"-O2 -fpermissive\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 

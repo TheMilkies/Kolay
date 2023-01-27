@@ -65,33 +65,40 @@ init_library() {
 	fi
 	require tee cate mkdir
 
-	mkdir -p src/lib$1 include/lib$1 cate
+	libname="lib${1,,}"
+	mkdir -p src/$libname include/$libname cate
 	if [ ! -f .catel ]; then echo "def debug" > .catel; fi
 
 	if [ $2 == "static" ]; then
 		type="static"
-	# elif [ $2 -eq 'stynamic' ]; then
-		# un
+	elif [ $2 == 'stynamic' ]; then
+		type="static"
+		stynamic='1'
 	else
 		type="dynamic"
 	fi
 
 	printf "Library $1($type)\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
-	printf ".files = {\"src/lib$1/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".files = {\"src/$libname/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".flags = \"-O2\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 
-	namespace_name=$1
-	start_header include/lib$1/$1.hpp
-	start_namespace include/lib$1/$1.hpp
-	end_namespace   include/lib$1/$1.hpp
+	if [ ! -z $stynamic ]; then
+		printf ".type = dynamic\n.build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	fi
 
-	printf "#include \"lib$1/$1.hpp\"\n\n" > src/lib$1/$1.cpp
-	start_namespace src/lib$1/$1.cpp
-	end_namespace   src/lib$1/$1.cpp
+	namespace_name=$1
+	start_header	include/$libname/$1.hpp
+	start_namespace include/$libname/$1.hpp
+	end_namespace   include/$libname/$1.hpp
+
+	printf "#include \"$libname/$1.hpp\"\n\n" > src/$libname/$1.cpp
+	start_namespace src/$libname/$1.cpp
+	end_namespace   src/$libname/$1.cpp
 
 	reset_namespace
+	stynamic=''
 	echo Done.
 }
 
@@ -219,6 +226,11 @@ case $1 in
 		static-library)
 			shift
 			init_library $1 static
+			shift
+			;;
+		stynamic-library)
+			shift
+			init_library $1 stynamic
 			shift
 			;;
 		dynamic-library)

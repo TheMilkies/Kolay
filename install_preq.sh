@@ -6,13 +6,25 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
+case $(uname -m) in
+x86_64)
+    ;;
+*)
+	echo "Kolay is currently not supported for " $(uname -m)
+	exit 1
+    ;;
+esac
+
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
 	apt install -y build-essential wget git
+else
+	echo "Currently only debian-based distros are supported."
+	echo "Please install the following packages: gcc g++ wget git bash"
 fi
 
 # cate
 verlte() {
-    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+    [ "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
 }
 
 verlt() {
@@ -39,7 +51,7 @@ if [ $needs_cate_update -eq 1 ]; then
 	sudo ./install.sh
 	cd ..
 	rm -rf catering
-	echo "done"
+	echo "Done installing Cate"
 fi
 
 # hpp

@@ -40,9 +40,11 @@ verlt() {
 }
 
 require() {
-	if ! command -v $1 &> /dev/null;then
-    	echo $1 "is not installed but is required for this operation"
-	fi
+	for program in "$@"; do
+		if ! command -v $program &> /dev/null;then
+			echo "\"$program\" is not installed but is required for this operation"
+		fi
+	done
 }
 
 self_update() {
@@ -50,13 +52,11 @@ self_update() {
 		echo "Please run as root (with sudo or doas)."
 		exit 1
 	fi
-
-	require git
-	require wget
-	echo "Checking for Kolay updates..."
-	latest_version=$(wget -qO- https://raw.githubusercontent.com/TheMilkies/Kolay/main/version.txt)
+	require git wget mkdir rm
 
 	KOLAY_VERSION=0.01
+	echo "Checking for Kolay updates..."
+	latest_version=$(wget -qO- https://raw.githubusercontent.com/TheMilkies/Kolay/main/version.txt)
 	if verlt $KOLAY_VERSION $latest_version; then
 		echo "Updating to" $latest_version
 		mkdir kolay_tmp; cd kolay_tmp
@@ -74,28 +74,28 @@ self_update() {
 }
 
 while [[ $# -gt 0 ]]; do
-  case $1 in
-    self-update)
-      shift 
-	  self_update
-      ;;
-    init)
-      shift # past argument
-	  if [ -z $1 ]; then
-	  	echo "Expected a name for the project"; fi
-	  init_project $1
-      shift # past value
-      ;;
+case $1 in
+	self-update)
+		shift 
+		self_update
+		;;
+	init)
+		shift # past argument
+		if [ -z $1 ]; then
+		echo "Expected a name for the project"; fi
+		init_project $1
+		shift # past value
+		;;
 	add)
-      shift 
-	  if [ -z $1 ]; then
-	  	echo "Expected a type (currently only class is supported)"; fi
-	  echo unimplemented
-      shift 
-      ;;
-    *)
-      echo "Unknown option $1"
-      exit 1
-      ;;
-  esac
+		shift 
+		if [ -z $1 ]; then
+		echo "Expected a type (currently only class is supported)"; fi
+		echo unimplemented
+		shift 
+		;;
+	*)
+		echo "Unknown option $1"
+		exit 1
+		;;
+esac
 done

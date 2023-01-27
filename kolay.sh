@@ -85,6 +85,11 @@ end_namespace() {
 		printf "\n\n} //namespace $namespace_name" >> $1; fi
 }
 
+reset_namespace() {
+	class_name=''
+	namespace_name=''
+}
+
 add_class() {
 	add_guard $1
 	split_namespace $1
@@ -102,11 +107,10 @@ add_class() {
 	printf "#include \"$name.hpp\"\n" > src/$name.cpp
 
 	start_namespace src/$name.cpp
-
 	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$name.cpp
 	printf "$name::~$name()\n{\n\t\n}" >> src/$name.cpp
-
 	end_namespace src/$name.cpp
+	reset_namespace
 }
 
 if [ "$#" -lt 1 ]; then

@@ -2,3 +2,6 @@ cate
 test
 a.out
 .vscode
+**.o
+**.so
+**.a

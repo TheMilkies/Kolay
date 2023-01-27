@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir _test;cd _test
+mkdir test;cd test
 
 kolay init test
 kolay add class TestClass

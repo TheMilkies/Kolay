@@ -59,12 +59,14 @@ self_update() {
 	KOLAY_VERSION=0.01
 	if verlt $KOLAY_VERSION $latest_version; then
 		echo "Updating to" $latest_version
-		mkdir kolay_tmp
-		cd kolay_tmp
+		mkdir kolay_tmp; cd kolay_tmp
 		git clone https://github.com/TheMilkies/Kolay.git
-		cd Kolay
-		./install_preq.sh
-		cd ../..
+		if [ ! -d Kolay ]; then
+			echo "Error in getting Kolay from github."
+			cd ../../; rm -rf kolay_tmp
+		fi
+		cd Kolay; ./install_preq.sh
+		cd ../../
 		rm -rf kolay_tmp
 	else
 		echo "Your Kolay is up to date!"
@@ -88,6 +90,7 @@ while [[ $# -gt 0 ]]; do
       shift 
 	  if [ -z $1 ]; then
 	  	echo "Expected a type (currently only class is supported)"; fi
+	  echo unimplemented
       shift 
       ;;
     *)

@@ -1,12 +1,13 @@
 #!/bin/bash
 
 #preq
-# sudo apt update
-# sudo apt install -y build-essentials fish wget
-
 if [ "$EUID" -ne 0 ]; then
 	echo "Please run as root (with sudo or doas)."
 	exit 1
+fi
+
+if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
+	apt install -y build-essentials wget git
 fi
 
 # cate

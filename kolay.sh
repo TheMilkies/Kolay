@@ -48,6 +48,7 @@ require() {
 	done
 }
 
+KOLAY_VERSION=0.01
 self_update() {
 	if [ "$EUID" -ne 0 ]; then
 		echo "Please run as root (with sudo or doas)."
@@ -55,7 +56,6 @@ self_update() {
 	fi
 	require git wget mkdir rm
 
-	KOLAY_VERSION=0.01
 	echo "Checking for Kolay updates..."
 	latest_version=$(wget -qO- https://raw.githubusercontent.com/TheMilkies/Kolay/main/version.txt)
 	if verlt $KOLAY_VERSION $latest_version; then
@@ -83,15 +83,19 @@ case $1 in
 	init)
 		shift
 		if [ -z $1 ]; then
-		echo "Expected a name for the project"; fi
+			echo "Expected a name for the project"; fi
 		init_project $1
 		;;
 	add)
 		shift 
 		if [ -z $1 ]; then
-		echo "Expected a type (currently only class is supported)"; fi
+			echo "Expected a type (currently only class is supported)"; fi
 		echo unimplemented
 		shift 
+		;;
+	-v|version)
+		echo $KOLAY_VERSION
+		exit
 		;;
 	*)
 		echo "Unknown option $1"

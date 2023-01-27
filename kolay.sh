@@ -3,7 +3,6 @@
 verlte() {
     [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
 }
-
 verlt() {
     [ "$1" = "$2" ] && return 1 || verlte $1 $2
 }
@@ -26,7 +25,7 @@ help_() {
 	echo '  new:' 
 	echo '    class:           creates a class   with the specified name'
 	echo '    static-library:  creates a library with the specified name'
-	echo '    dynamic-library: same as above'
+	echo '    dynamic-library: same as above']
 }
 
 not_empty() {
@@ -203,8 +202,7 @@ self_update() {
 			exit 1
 		fi
 		cd Kolay; ./install_preq.sh
-		cd ../../
-		rm -rf kolay_tmp
+		cd ../../; rm -rf kolay_tmp
 	else
 		echo "Your Kolay is up to date!"
 	fi
@@ -258,6 +256,10 @@ case $1 in
 		;;
 	-v|version)
 		echo $KOLAY_VERSION
+		exit
+		;;
+	-h|-\?|--help|help)
+		help_
 		exit
 		;;
 	*)

@@ -46,8 +46,8 @@ init_project() {
 
 	mkdir -p src include cate
 	echo "def debug" > .catel
-	printf "Project $1\n" | tee cate/debug.cate cate/release.cate > /dev/null 2>&1
-	printf ".files = {\"src/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf "compiler = \"g++\"\nstd = \"c++17\"\nProject $1\n" | tee cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".files = {\"src/*.cpp\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".flags = \"-O2 -fpermissive\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
@@ -79,7 +79,7 @@ init_library() {
 	fi
 
 	printf "Library $1($type)\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
-	printf ".files = {\"src/$libname/*.cpp\"}\n.compiler = \"g++\"\n.std = \"c++17\"\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
+	printf ".files = {\"src/$libname/*.cpp\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".flags = \"-O2 -fpermissive\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1

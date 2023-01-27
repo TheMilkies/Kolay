@@ -15,12 +15,17 @@ x86_64)
     ;;
 esac
 
-require() {
+error_if_doesnt_have() {
+	_exit=0
 	for program in "$@"; do
 		if ! command -v $program &> /dev/null;then
 			echo "Please install \"$program\""
+			_exit=1
 		fi
 	done
+	if [ _exit -eq 1]; then
+		exit 1
+	fi
 }
 
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
@@ -28,7 +33,7 @@ if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
 else
 	echo "Currently only debian-based distros are supported."
 fi
-require g++ bash wget git 
+error_if_doesnt_have g++ bash wget git 
 
 # cate
 verlte() {

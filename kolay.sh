@@ -1,7 +1,5 @@
 #!/bin/bash
 
-KOLAY_VERSION=0.01
-
 help_() {
 	echo 'Kolay tools for C++'
 	echo '	self-update: updates kolay'
@@ -57,12 +55,16 @@ self_update() {
 	require wget
 	echo "Checking for Kolay updates..."
 	latest_version=$(wget -qO- https://raw.githubusercontent.com/TheMilkies/Kolay/main/version.txt)
-	if verlt $KOLAY_VERSION $version; then
-		echo "Updating to" $version
-		mkdir kolay_tmp; cd kolay_tmp
+
+	KOLAY_VERSION=0.01
+	if verlt $KOLAY_VERSION $latest_version; then
+		echo "Updating to" $latest_version
+		mkdir kolay_tmp
+		cd kolay_tmp
 		git clone https://github.com/TheMilkies/Kolay.git
+		cd Kolay
 		./install_preq.sh
-		cd ..
+		cd ../..
 		rm -rf kolay_tmp
 	else
 		echo "Your Kolay is up to date!"

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+verlte() {
+    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+}
+
+verlt() {
+    [ "$1" = "$2" ] && return 1 || verlte $1 $2
+}
+
 help_() {
 	echo 'Kolay tools for C++'
 	echo '	self-update: updates kolay'
@@ -10,6 +18,7 @@ help_() {
 }
 
 init_project() {
+	require tee cate mkdir
 	if [ -d "cate" ]; then
 		echo "Project already inited."
 		exit 1
@@ -30,14 +39,6 @@ if [ "$#" -lt 1 ]; then
     help_
 	exit 1
 fi
-
-verlte() {
-    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
-}
-
-verlt() {
-    [ "$1" = "$2" ] && return 1 || verlte $1 $2
-}
 
 require() {
 	for program in "$@"; do
@@ -80,11 +81,10 @@ case $1 in
 		self_update
 		;;
 	init)
-		shift # past argument
+		shift
 		if [ -z $1 ]; then
 		echo "Expected a name for the project"; fi
 		init_project $1
-		shift # past value
 		;;
 	add)
 		shift 

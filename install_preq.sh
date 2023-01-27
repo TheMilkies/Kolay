@@ -16,10 +16,10 @@ x86_64)
 esac
 
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
-	apt install -y build-essential wget git
+	apt -qqq install -y build-essential wget git
 else
 	echo "Currently only debian-based distros are supported."
-	echo "Please install the following packages: gcc g++ wget git bash"
+	echo "Please install the following packages: gcc, g++, wget, git, bash"
 fi
 
 # cate

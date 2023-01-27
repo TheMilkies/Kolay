@@ -21,9 +21,9 @@ help_() {
 	echo '	self-update: updates kolay'
 	echo '	init:		 creates a project with the specified name'
 	echo
-	echo '	add:'
-	echo '	    class:   adds a class   with the specified name'
-	echo '	    library: adds a library with the specified name'
+	echo '	new:'
+	echo '	    class:   creates a class   with the specified name'
+	echo '	    library: creates a library with the specified name'
 }
 
 not_empty() {
@@ -61,7 +61,7 @@ add_guard() {
 		exit 1
 	fi
 	if [ -f "src/$1.cpp" ] || [ -f "include/$1.hpp" ]; then
-		echo "$1 was already added."
+		echo "$1 was already created."
 		exit 1
 	fi
 }
@@ -150,6 +150,7 @@ case $1 in
 	self-update)
 		shift 
 		self_update
+		exit
 		;;
 	init)
 		shift
@@ -157,8 +158,9 @@ case $1 in
 			echo "Expected a name for the project"; fi
 		init_project $1
 		shift
+
 		;;
-	add)
+	new)
 		shift 
 		if [ -z $1 ]; then
 			echo "Expected a type (currently only class is supported)"; fi
@@ -166,9 +168,17 @@ case $1 in
 		class)
 			shift
 			add_class $1
+			shift
+			;;
+		library)
+			echo "Unimplemented"
+			exit 1
+			;;
+		*)
+			echo "Unknown option $1"
+			exit 1
 			;;
 		esac
-		shift 
 		;;
 	-v|version)
 		echo $KOLAY_VERSION

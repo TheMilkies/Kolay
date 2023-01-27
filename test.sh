@@ -2,8 +2,8 @@
 mkdir test;cd test
 
 kolay init test
-kolay add class TestClass
-kolay add class Namespace::Test
+kolay new class TestClass
+kolay new class TestNamespace::Test
 
 cate
 if [ $? -ne 0 ]; then

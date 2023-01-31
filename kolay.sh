@@ -80,7 +80,7 @@ init_library() {
 	printf "Library $1($type)\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".files = {\"src/$libname/*.cpp\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 	printf ".flags = \"-O2 -fpermissive\"\n.incs = {\"include\"}\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
-	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
+	echo   ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 
 	if [ ! -z $stynamic ]; then
@@ -96,8 +96,7 @@ init_library() {
 	start_namespace src/$libname/$1.cpp
 	end_namespace   src/$libname/$1.cpp
 
-	reset_namespace
-	stynamic=''
+	reset_temps
 	echo Done.
 }
 
@@ -140,10 +139,11 @@ end_namespace() {
 		printf "\n\n} //namespace $namespace_name" >> $1; fi
 }
 
-reset_namespace() {
+reset_temps() {
 	lib_path_name=''
 	class_name=''
 	namespace_name=''
+	stynamic=''
 }
 
 start_header() {
@@ -174,7 +174,7 @@ new_class() {
 	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$lib_path_name/$name.cpp
 	printf "$name::~$name()\n{\n\t\n}" >> src/$lib_path_name/$name.cpp
 	end_namespace src/$lib_path_name/$name.cpp
-	reset_namespace
+	reset_temps
 }
 
 if [ "$#" -lt 1 ]; then
@@ -208,6 +208,8 @@ self_update() {
 		if [ "$installed_version" != "$latest_version" ]; then
 			echo "Error in updating Kolay."
 			exit 1
+		else
+			echo "Done. Welcome to Kolay v$installed_version"
 		fi
 
 	else

@@ -6,6 +6,7 @@ kolay new class TestClass new class TestNamespace::Test
 kolay new static-library TestA new dynamic-library TestB
 kolay new stynamic-library TestC
 kolay new class TestC::Aquarius #ref
+kolay new singleton TestA::Singleton 
 
 cate
 if [ $? -ne 0 ]; then

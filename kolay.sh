@@ -147,23 +147,26 @@ reset_temps() {
 }
 
 start_header() {
-	printf "#pragma once\n#include <cpp_kolay.hpp>\n\n" > $1
+	printf "#pragma once\n" >> $1
+	if [ ! -z $2 ]; then
+		printf "#include <$2>\n" >> $1
+	fi
+	printf "#include <cpp_kolay.hpp>\n\n" >> $1
 }
 
-new_class() {
+new_header_with_namespace() {
 	add_guard $1
 	split_namespace $1
 	name=$1
 	if [ ! -z $class_name ]; then
 		name=$class_name
 	fi
-
-	start_header include/$lib_path_name/$name.hpp
+	
+	start_header include/$lib_path_name/$name.hpp $2
 	start_namespace include/$lib_path_name/$name.hpp
-	printf "class $name\n{\n" >> include/$lib_path_name/$name.hpp
-	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$lib_path_name/$name.hpp
-	end_namespace include/$lib_path_name/$name.hpp
+}
 
+new_cpp_with_namespace() {
 	if [ ! -z $lib_path_name ]; then
 		printf "#include \"$lib_path_name/$name.hpp\"\n" > src/$lib_path_name/$name.cpp
 	else
@@ -171,6 +174,37 @@ new_class() {
 	fi
 
 	start_namespace src/$lib_path_name/$name.cpp
+}
+
+new_class() {
+	new_header_with_namespace $1
+
+	printf "class $name\n{\n" >> include/$lib_path_name/$name.hpp
+	printf "public:\n\t$name();\n\t~$name();\n};" >> include/$lib_path_name/$name.hpp
+	end_namespace include/$lib_path_name/$name.hpp
+
+	new_cpp_with_namespace
+	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$lib_path_name/$name.cpp
+	printf "$name::~$name()\n{\n\t\n}" >> src/$lib_path_name/$name.cpp
+	end_namespace src/$lib_path_name/$name.cpp
+	reset_temps
+}
+
+new_singleton() {
+	new_header_with_namespace $1 mutex
+
+	printf "class $name\n{\n" >> include/$lib_path_name/$name.hpp
+	printf "private:\n\tstatic $name* m_instance;\n\tstatic std::mutex m_mutex;\n" >> include/$lib_path_name/$name.hpp
+	printf "protected:\n\t$name();\n\t~$name();\n\t//put your variables here\n" >> include/$lib_path_name/$name.hpp
+	printf "\t$name($name &other) = delete;\n\tvoid operator=(const $name &) = delete;\n\t" >> include/$lib_path_name/$name.hpp
+	printf "static $name* get_instance();" >> include/$lib_path_name/$name.hpp
+	printf "\n};" >> include/$lib_path_name/$name.hpp
+
+	end_namespace include/$lib_path_name/$name.hpp
+
+	new_cpp_with_namespace
+	printf "$name* $name::m_instance = NULL;\n$name* $name::get_instance()\n{\n\t" >> src/$lib_path_name/$name.cpp
+	printf "std::lock_guard<std::mutex> lock(m_mutex);\n\tif(m_instance == NULL) m_instance = new $name;\n\treturn m_instance;\n}\n\n" >> src/$lib_path_name/$name.cpp
 	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$lib_path_name/$name.cpp
 	printf "$name::~$name()\n{\n\t\n}" >> src/$lib_path_name/$name.cpp
 	end_namespace src/$lib_path_name/$name.cpp
@@ -209,7 +243,7 @@ self_update() {
 			echo "Error in updating Kolay."
 			exit 1
 		else
-			echo "Done. Welcome to Kolay v$installed_version"
+			echo "Done. Welcome to Kolay v$installed_version!"
 		fi
 
 	else
@@ -240,6 +274,11 @@ case $1 in
 		class)
 			shift
 			new_class $1
+			shift
+			;;
+		singleton)
+			shift
+			new_singleton $1
 			shift
 			;;
 		static-library)

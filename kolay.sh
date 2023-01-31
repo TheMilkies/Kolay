@@ -205,7 +205,7 @@ self_update() {
 		cd ../../; rm -rf kolay_tmp
 		
 		installed_version=$(kolay -v)
-		if [ $installed_version -ne $latest_version ]; then
+		if [ "$installed_version" != "$latest_version" ]; then
 			echo "Error in updating Kolay."
 			exit 1
 		fi

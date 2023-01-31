@@ -97,7 +97,6 @@ inline c_string shift_arg(i32 &argc, c_string const* &argv) {
 }
 
 #define forever for(;;)
-#define repeat(i, to) for(u32 i=0; i < to; i++)
 
 //more fun than std
 template<typename...A>

@@ -25,7 +25,8 @@ help_() {
 	echo '  new:' 
 	echo '    class:           creates a class   with the specified name'
 	echo '    static-library:  creates a library with the specified name'
-	echo '    dynamic-library: same as above']
+	echo '    dynamic-library: same as above'
+	echo '    singleton:       creates a singleton like above'
 }
 
 not_empty() {

@@ -23,7 +23,7 @@ error_if_doesnt_have() {
 			_exit=1
 		fi
 	done
-	if [ _exit -eq 1]; then
+	if [ _exit -eq 1 ]; then
 		exit 1
 	fi
 }

@@ -16,14 +16,14 @@ x86_64)
 esac
 
 error_if_doesnt_have() {
-	_exit=0
+	_exit="0"
 	for program in "$@"; do
 		if ! command -v $program &> /dev/null;then
 			echo "Please install \"$program\""
-			_exit=1
+			_exit="1"
 		fi
 	done
-	if [ _exit -eq 1 ]; then
+	if [ _exit == "1" ]; then
 		exit 1
 	fi
 }

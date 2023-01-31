@@ -203,6 +203,13 @@ self_update() {
 		fi
 		cd Kolay; ./install_preq.sh
 		cd ../../; rm -rf kolay_tmp
+		
+		installed_version=$(kolay -v)
+		if [ $installed_version -ne $latest_version ]; then
+			echo "Error in updating Kolay."
+			exit 1
+		fi
+
 	else
 		echo "Your Kolay is up to date!"
 	fi

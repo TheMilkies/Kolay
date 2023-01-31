@@ -83,7 +83,11 @@ constexpr inline u64 operator "" _(const char* p, size_t)
 //args parsing
 inline c_string shift_arg(i32 &argc, c_string const* &argv) {
 	argc--; *argv++;
-	return argv[0] ? argv[0] : NULL;
+	
+	if (argc <= 0 || argv[0] == NULL)
+		return "";
+
+	return argv[0];
 }
 
 #define shift_args() shift_arg(argc, argv)
@@ -94,5 +98,17 @@ inline c_string shift_arg(i32 &argc, c_string const* &argv) {
 
 #define forever for(;;)
 #define repeat(i, to) for(u32 i=0; i < to; i++)
+
+//more fun than std
+template<typename...A>
+constexpr inline void print(A&&...args)
+{
+	(std::cout << ... << args);
+}
+template<typename...A>
+constexpr inline void print_error(A&&...args)
+{
+	(std::cerr << ... << args);
+}
 
 #endif //CPP_KOLAY_HPP

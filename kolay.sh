@@ -51,7 +51,7 @@ init_project() {
 	echo ".defs = {\"DEBUG\"}" >> cate/debug.cate 
 	printf ".build()\n\n" | tee -a cate/debug.cate cate/release.cate > /dev/null 2>&1
 
-	printf "#include <cpp_kolay.hpp>\n\ni32 main(i32 argc, char const* argv[])\n{\n\t\n\treturn 0;\n}" > src/main.cpp
+	printf "#include <cpp_kolay.hpp>\n\ni32 main(i32 argc, char* const* argv)\n{\n\t\n\treturn 0;\n}" > src/main.cpp
 
 	echo Done.
 }
@@ -182,7 +182,7 @@ if [ "$#" -lt 1 ]; then
 	exit 1
 fi
 
-KOLAY_VERSION=0.01
+KOLAY_VERSION=0.02
 self_update() {
 	if [ "$EUID" -ne 0 ]; then
 		echo "Please run as root (with sudo or doas)."

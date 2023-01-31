@@ -68,7 +68,8 @@ if [ $needs_cate_update -eq 1 ]; then
 fi
 
 # hpp
-sudo cp cpp_kolay.hpp /usr/include/cpp_kolay.hpp
+cp cpp_kolay.hpp /usr/include/cpp_kolay.hpp
+cp kolay_colors.hpp /usr/include/kolay_colors.hpp
 
 #kolayion
-sudo cp kolay.sh /usr/bin/kolay
+cp kolay.sh /usr/bin/kolay

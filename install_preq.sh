@@ -6,9 +6,11 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
+arch=''
 case $(uname -m) in
 x86_64)
-    ;;
+    arch=x86_64
+	;;
 *)
 	echo "Kolay is currently not supported for " $(uname -m)
 	exit 1

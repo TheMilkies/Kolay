@@ -19,7 +19,7 @@ help_() {
 	echo 'Kolay (tools) for C++'
 	echo 'kolay <action> [subaction] <name>'
 	echo
-	echo '  self-update:       updates kolay'
+	echo '  update:            updates kolay'
 	echo '  init:              creates a project with the specified name'
 	echo
 	echo '  new:' 
@@ -226,7 +226,7 @@ if [ "$#" -lt 1 ]; then
 	exit 1
 fi
 
-KOLAY_VERSION=0.02
+KOLAY_VERSION=0.03
 self_update() {
 	if [ "$EUID" -ne 0 ]; then
 		echo "Please run as root (with sudo or doas)."
@@ -263,7 +263,7 @@ self_update() {
 
 while [[ $# -gt 0 ]]; do
 case $1 in
-	self-update)
+	self-update|update)
 		shift
 		self_update
 		exit

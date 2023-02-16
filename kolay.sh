@@ -115,6 +115,7 @@ add_guard() {
 
 split_namespace() {
 	not_empty $1
+
 	if [[ $1 != *"::"* ]]; then return; fi
 
 	#namespace things
@@ -142,6 +143,7 @@ end_namespace() {
 
 reset_temps() {
 	lib_path_name=''
+	_path=''
 	class_name=''
 	namespace_name=''
 	stynamic=''
@@ -161,6 +163,13 @@ new_header_with_namespace() {
 	name=$1
 	if [ ! -z $class_name ]; then
 		name=$class_name
+	fi
+
+	# handle "dir/class"
+	name=${1%\/*}
+	lib_path_name=${1##*\/}
+	if [ ! -d $lib_path_name ]; then
+		mkdir -p src/$lib_path_name include/$lib_path_name
 	fi
 	
 	start_header include/$lib_path_name/$name.hpp $2
@@ -192,20 +201,20 @@ new_class() {
 }
 
 new_singleton() {
-	new_header_with_namespace $1 mutex
+	new_header_with_namespace $1
 
 	printf "class $name\n{\n" >> include/$lib_path_name/$name.hpp
-	printf "private:\n\tstatic $name* m_instance;\n\tstatic std::mutex m_mutex;\n" >> include/$lib_path_name/$name.hpp
+	printf "private:\n\tstatic $name* m_instance;\n" >> include/$lib_path_name/$name.hpp
 	printf "protected:\n\t$name();\n\t~$name();\n\t//put your variables here\n" >> include/$lib_path_name/$name.hpp
-	printf "\t$name($name &other) = delete;\n\tvoid operator=(const $name &) = delete;\n\t" >> include/$lib_path_name/$name.hpp
-	printf "static $name* get_instance();" >> include/$lib_path_name/$name.hpp
+	printf "\t$name($name &other) = delete;\n\tvoid operator=(const $name &) = delete;\n" >> include/$lib_path_name/$name.hpp
+	printf "public:\n\tstatic $name* get_instance();" >> include/$lib_path_name/$name.hpp
 	printf "\n};" >> include/$lib_path_name/$name.hpp
 
 	end_namespace include/$lib_path_name/$name.hpp
 
 	new_cpp_with_namespace
 	printf "$name* $name::m_instance = NULL;\n$name* $name::get_instance()\n{\n\t" >> src/$lib_path_name/$name.cpp
-	printf "std::lock_guard<std::mutex> lock(m_mutex);\n\tif(m_instance == NULL) m_instance = new $name;\n\treturn m_instance;\n}\n\n" >> src/$lib_path_name/$name.cpp
+	printf "if(m_instance == NULL) m_instance = new $name;\n\treturn m_instance;\n}\n\n" >> src/$lib_path_name/$name.cpp
 	printf "$name::$name()\n{\n\t\n}\n\n" >> src/$lib_path_name/$name.cpp
 	printf "$name::~$name()\n{\n\t\n}" >> src/$lib_path_name/$name.cpp
 	end_namespace src/$lib_path_name/$name.cpp

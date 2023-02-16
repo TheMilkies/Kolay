@@ -2,10 +2,10 @@
 mkdir test;cd test
 
 kolay init test
-kolay new class TestClass new class TestNamespace::Test
+kolay new class a/TestClass new class TestNamespace::Test
 kolay new static-library TestA new dynamic-library TestB
 kolay new stynamic-library TestC
-kolay new class TestC::Aquarius #ref
+kolay new class TestC::Aquarius 
 kolay new singleton TestA::Singleton new singleton TestB::Sengliton
 
 cate

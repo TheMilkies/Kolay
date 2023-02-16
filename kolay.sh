@@ -166,8 +166,8 @@ new_header_with_namespace() {
 	fi
 
 	# handle "dir/class"
-	name=${1%\/*}
-	lib_path_name=${1##*\/}
+	name=${1##*\/}
+	lib_path_name=${1%\/*}
 	if [ ! -d $lib_path_name ]; then
 		mkdir -p src/$lib_path_name include/$lib_path_name
 	fi

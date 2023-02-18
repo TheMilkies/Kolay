@@ -168,7 +168,11 @@ new_header_with_namespace() {
 	# handle "dir/class"
 	name=${1##*\/}
 	lib_path_name=${1%\/*}
-	if [ ! -d $lib_path_name ]; then
+	if [ $lib_path_name == $1 ]; then
+		lib_path_name=''
+	fi
+
+	if [ ! -d $lib_path_name ] && [ $lib_path_name != $1 ]; then
 		mkdir -p src/$lib_path_name include/$lib_path_name
 	fi
 	

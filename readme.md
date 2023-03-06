@@ -1,5 +1,6 @@
 # KolayC++
 # **Work in progress**
+This may or may not be abandoned.
 
 ## Strings in switches
 Credit to [@hare1039's beautiful_switch.cpp](https://gist.github.com/hare1039/581b20cc8fbc8058d875894f05e655e5)

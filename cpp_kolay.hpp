@@ -36,7 +36,7 @@ typedef char* c_string;
 #define DTEXT(text) __DEBUG_COUT << text << std::endl;
 
 #define unimplemented() __DEBUG_COUT << __FUNCTION__ << "() is unimplemented\n";
-#define unimplemented_exit() {unimplemented(); exit(1)}
+#define unimplemented_exit() {unimplemented(); exit(1);}
 
 #define nul_guard(ptr) if(!ptr) {\
 	__DEBUG_COUT DEBRED "\"" #ptr "\"" DEBCRESET " is a null pointer. quitting.\n" ;\

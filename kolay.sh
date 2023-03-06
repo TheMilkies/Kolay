@@ -230,7 +230,7 @@ if [ "$#" -lt 1 ]; then
 	exit 1
 fi
 
-KOLAY_VERSION=0.03
+KOLAY_VERSION=0.031
 self_update() {
 	if [ "$EUID" -ne 0 ]; then
 		echo "Please run as root (with sudo or doas)."

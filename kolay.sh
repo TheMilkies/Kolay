@@ -272,6 +272,19 @@ self_update() {
 	fi
 }
 
+cate_build() {
+	check_not_init
+	require cate
+
+	cate $@
+
+	if [ $? -ne 0 ]; then
+		echo "Error in building $1"
+		exit 1
+	fi
+
+}
+
 while [[ $# -gt 0 ]]; do
 case $1 in
 	self-update|update)
@@ -331,20 +344,17 @@ case $1 in
 		help_
 		exit
 		;;
+	build)
+		cate_build debug
+		shift
+		;;
+	release)
+		cate_build release -f
+		shift
+		;;
 	*)
 		echo "Unknown option $1"
 		exit 1
 		;;
-	build)
-		check_not_init
-		require cate
-		cate debug
-		;;
-	release)
-		check_not_init
-		require cate
-		cate release -f
-		;;
-
 esac
 done

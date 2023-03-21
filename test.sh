@@ -8,7 +8,8 @@ kolay new stynamic-library TestC
 kolay new class TestC::Aquarius 
 kolay new singleton TestA::Singleton new singleton TestB::Sengliton
 
-cate
+kolay build
+kolay release
 if [ $? -ne 0 ]; then
 	echo "Error"
 	cd ../; rm -rf _test

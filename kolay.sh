@@ -15,12 +15,21 @@ require() {
 	done
 }
 
+check_not_init() {
+	if [ ! -d "src" ]; then
+		echo "Project was not inited."
+		exit 1
+	fi
+}
+
 help_() {
 	echo 'Kolay (tools) for C++'
 	echo 'kolay <action> [subaction] <name>'
 	echo
-	echo '  update:            updates kolay'
 	echo '  init:              creates a project with the specified name'
+	echo '  build:             builds debug'
+	echo '  release:           rebuilds completely for release'
+	echo '  update:            updates kolay'
 	echo
 	echo '  new:' 
 	echo '    class:           creates a class   with the specified name'
@@ -103,10 +112,8 @@ init_library() {
 
 add_guard() {
 	not_empty $1
-	if [ ! -d "src" ]; then
-		echo "Project was not inited."
-		exit 1
-	fi
+	check_not_init
+
 	if [ -f "src/$1.cpp" ] || [ -f "include/$1.hpp" ]; then
 		echo "$1 was already created."
 		exit 1
@@ -295,17 +302,17 @@ case $1 in
 			new_singleton $1
 			shift
 			;;
-		static-library)
+		static|static-library)
 			shift
 			init_library $1 static
 			shift
 			;;
-		stynamic-library)
+		stynamic|stynamic-library)
 			shift
 			init_library $1 stynamic
 			shift
 			;;
-		dynamic-library)
+		dynamic|dynamic-library)
 			shift
 			init_library $1 dynamic
 			shift
@@ -328,5 +335,16 @@ case $1 in
 		echo "Unknown option $1"
 		exit 1
 		;;
+	build)
+		check_not_init
+		require cate
+		cate debug
+		;;
+	release)
+		check_not_init
+		require cate
+		cate release -f
+		;;
+
 esac
 done

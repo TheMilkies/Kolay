@@ -152,6 +152,7 @@ reset_temps() {
 	lib_path_name=''
 	_path=''
 	class_name=''
+	temp=''
 	namespace_name=''
 	stynamic=''
 }
@@ -167,7 +168,8 @@ start_header() {
 new_header_with_namespace() {
 	add_guard $1
 	split_namespace $1
-	name=$1
+	name=${1%*\:\:}
+	echo $name > a
 	if [ ! -z $class_name ]; then
 		name=$class_name
 	fi
@@ -182,7 +184,7 @@ new_header_with_namespace() {
 	if [ ! -d $lib_path_name ] && [ $lib_path_name != $1 ]; then
 		mkdir -p src/$lib_path_name include/$lib_path_name
 	fi
-	
+
 	start_header include/$lib_path_name/$name.hpp $2
 	start_namespace include/$lib_path_name/$name.hpp
 }
